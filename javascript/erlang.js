@@ -1,6 +1,57 @@
 
 
-import * as OBJ from "./obj.js";
+    // Merge a list of objects into one object.
+    // Later objects values replace earlier objects values 
+    function merge(objects) {
+        var o = {};
+
+        objects.filter(function (element) {
+            o = Object.assign(o, element);
+            return false;
+        });
+        return o;
+    }
+
+    function typeOf( {object} = {}) {
+        return Object.prototype.toString.call(object).split("[object ")[1].split("]")[0];
+    }
+
+    /* From: https://gist.github.com/nicbell/6081098 */
+    function compare(obj1, obj2) {
+        // Loop through properties in object 1
+        for (var p in obj1) {
+            // Check property exists on both objects
+            if (obj1.hasOwnProperty(p) !== obj2.hasOwnProperty(p))
+                return false;
+
+            switch (typeof (obj1[p])) {
+                // Deep compare objects
+                case 'object':
+                    if (!compare(obj1[p], obj2[p]))
+                        return false;
+                    break;
+                    // Compare function code
+                case 'function':
+                    if (typeof (obj2[p]) == 'undefined' || (p != 'compare' && obj1[p].toString() != obj2[p].toString()))
+                        return false;
+                    break;
+                    // Compare values
+                default:
+                    if (obj1[p] != obj2[p])
+                        return false;
+            }
+        }
+
+        // Check object 2 for any extra properties
+        for (var p in obj2) {
+            if (typeof (obj1[p]) == 'undefined')
+                return false;
+        }
+        return true;
+    };
+
+
+
 
 
 export function decode(term) {
@@ -22,7 +73,7 @@ export function decode(term) {
     return undefined;
 }
 
-//--------------------------------
+// --------------------------------
 
 
 /* Parse object: po{s, i} */
@@ -36,8 +87,8 @@ function _parse(po) {
     while (po.i !== l - 1) {
         var ch = po.s.charAt(po.i);
         /*
-         * An atom
-         */
+		 * An atom
+		 */
         if (ch === "'") {
             var atom = "";
             po.i++; /* Skip the ' */
@@ -50,8 +101,8 @@ function _parse(po) {
         }
 
         /*
-         * A String
-         */
+		 * A String
+		 */
         if (ch === '"') {
             var str = "";
             po.i++; /* Skip the " */
@@ -64,8 +115,8 @@ function _parse(po) {
         }
 
         /*
-         * A tuple
-         */
+		 * A tuple
+		 */
         if (ch === "{") {
             po.i = skipwsc(po.s, ++po.i); /* Skip the { and any whitespaces */
             var tuples = [];
@@ -80,8 +131,8 @@ function _parse(po) {
         }
 
         /*
-         * A list
-         */
+		 * A list
+		 */
         if (ch === "[") {
             po.i = skipwsc(po.s, ++po.i); /* Skip the [ and any whitespaces */
             var list = [];
@@ -96,8 +147,8 @@ function _parse(po) {
         }
 
         /*
-         * A map
-         */
+		 * A map
+		 */
         if (ch === "#" && po.s.charAt(po.i + 1) === "{") {
             po.i = skipwsc(po.s, po.i + 2); /* Skip the #{ and any whitespaces */
             var map = [];
@@ -141,7 +192,7 @@ function isspace(c) {
 }
 
 
-//---------------------------------
+// ---------------------------------
 
 
 
@@ -158,13 +209,14 @@ export class eBase {
     value() {
         return this._value;
     }
+    equals(eterm) {
+        return compare(this, eterm);
+    }
 }
 
 /*
- * Construct:
- *      var integer = new eInteger(42);
- * Deconstruct:
- *      var a = integer.value(); 
+ * Construct: var integer = new eInteger(42); Deconstruct: var a =
+ * integer.value();
  */
 export class eInteger extends eBase {
     constructor(value) {
@@ -186,10 +238,7 @@ export class eInteger extends eBase {
 }
 
 /*
- * Construct:
- *      var f = new eFloat(42);
- * Deconstruct:
- *      var a = f.value(); 
+ * Construct: var f = new eFloat(42); Deconstruct: var a = f.value();
  */
 export class eFloat extends eBase {
     constructor(value) {
@@ -213,10 +262,7 @@ export class eFloat extends eBase {
 
 
 /*
- * Construct:
- *      var atom = new eAtom("a");
- * Deconstruct:
- *      var a = atom.value(); 
+ * Construct: var atom = new eAtom("a"); Deconstruct: var a = atom.value();
  */
 
 export class eAtom extends eBase {
@@ -240,10 +286,8 @@ export class eAtom extends eBase {
 
 
 /*
- * Construct:
- *      var string = new eString("a");
- * Deconstruct:
- *      var a = string.value(); 
+ * Construct: var string = new eString("a"); Deconstruct: var a =
+ * string.value();
  */
 export class eString extends eBase {
     constructor(value) {
@@ -264,22 +308,22 @@ export class eString extends eBase {
         return '"' + this._value + '"';
     }
     forEach() {
-        /* 
-         * All Erlang strings are array of characters. An empty list can
-         * therefore be encode as an empty string by the server.
-         * Handle this here.
-         */
+        /*
+		 * All Erlang strings are array of characters. An empty list can
+		 * therefore be encode as an empty string by the server. Handle this
+		 * here.
+		 */
 
         if (this._value === "") {
             /* Empty list, nothing to iterate */
         }
     }
     lLength() {
-        /* 
-         * All Erlang strings are array of characters. An empty list can
-         * therefore be encode as an empty string by the server.
-         * Handle this here.
-         */
+        /*
+		 * All Erlang strings are array of characters. An empty list can
+		 * therefore be encode as an empty string by the server. Handle this
+		 * here.
+		 */
 
         if (this._value === "") {
             return 0;
@@ -288,11 +332,9 @@ export class eString extends eBase {
 }
 
 /*
- * Construct:
- *      var tuple = new eTuple([new eAtom("a"), new eAtom("b"), new eString("c")]);
- * Deconstruct:
- *      var [a, b, c] = tuple.value(); 
- *      
+ * Construct: var tuple = new eTuple([new eAtom("a"), new eAtom("b"), new
+ * eString("c")]); Deconstruct: var [a, b, c] = tuple.value();
+ * 
  */
 export class eTuple extends eBase {
     constructor(value) {
@@ -331,12 +373,10 @@ export class eTuple extends eBase {
 
 
 /*
- * Construct:
- *      var list = new eList([new eAtom("a"), new eAtom("b"), new eString("c")]);
- * Deconstruct:
- *      var [a, b, c] = list.value(); 
- *      
- *  list.indexOf(new eAtom("b"));    
+ * Construct: var list = new eList([new eAtom("a"), new eAtom("b"), new
+ * eString("c")]); Deconstruct: var [a, b, c] = list.value();
+ * 
+ * list.indexOf(new eAtom("b"));
  */
 export class eList extends eBase {
     constructor(value) {
@@ -374,7 +414,7 @@ export class eList extends eBase {
     indexOf(eterm) {
         var l = this._value.length;
         for (var i = 0; i !== l; i++) {
-            if (OBJ.OBJ.compare(this._value[i], eterm)) {
+            if (compare(this._value[i], eterm)) {
                 return i;
             }
         }
@@ -382,8 +422,8 @@ export class eList extends eBase {
         return -1;
     }
     /*
-     * Helper for finding atoms by creating an atom
-     */
+	 * Helper for finding atoms by creating an atom
+	 */
     indexOfAtom(str) {
         return this.indexOf(new eAtom(str));
     }
@@ -396,12 +436,11 @@ export class eList extends eBase {
 }
 
 /*
- * Construct:
- *      var map = new eMap([{key: new eAtom("a"), value: new eAtom("b")}, {key:new eString("c"), value:new eTuple([])}]);
- * Deconstruct:
- *      var a = map.value(new eAtom("a")); 
- *      
- *  map.keys();
+ * Construct: var map = new eMap([{key: new eAtom("a"), value: new eAtom("b")},
+ * {key:new eString("c"), value:new eTuple([])}]); Deconstruct: var a =
+ * map.value(new eAtom("a"));
+ * 
+ * map.keys();
  */
 /* {'map: [{'key': {'atom': "a"}, 'value': {'atom': "map"}}]} */
 
@@ -435,7 +474,7 @@ export class eMap extends eBase {
     value(eterm) {
         var l = this._keys.length;
         for (var i = 0; i !== l; i++) {
-            if (OBJ.OBJ.compare(this._keys[i], eterm)) {
+            if (compare(this._keys[i], eterm)) {
                 return this._values[i];
             }
         }
