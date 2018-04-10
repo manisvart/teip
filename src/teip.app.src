@@ -1,0 +1,14 @@
+{application, 'png',
+ [{description, "The Erlang Intermediate Protocol"},
+  {vsn, "0.1.0"},
+  {contributors, ["Carl Nordin (manisvart)"]},
+  {licenses, ["MIT"]},
+  {links, [{"Github", "https://github.com/manisvart/teip"}]},
+  {registered, []},
+  {applications,
+   [kernel,
+    stdlib
+   ]},
+  {env,[]},
+  {modules, []}
+ ]}.
