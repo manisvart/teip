@@ -10,5 +10,5 @@
     stdlib
    ]},
   {env,[]},
-  {modules, []}
+  {modules, [teip]}
  ]}.
