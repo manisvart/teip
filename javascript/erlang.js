@@ -474,7 +474,7 @@ export class eList extends eBase {
 		if(i !== -1)
 			this._value.splice(i, 1);
 		
-		return eList_this;
+		return this;
 	}
 }
 
