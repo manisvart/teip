@@ -472,7 +472,7 @@ export class eList extends eBase {
 		let i = this.indexOf(eTerm_);
 		
 		if(i !== -1)
-			this._value.splice(index, 1);
+			this._value.splice(i, 1);
 		
 		return eList_this;
 	}
