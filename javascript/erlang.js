@@ -458,7 +458,7 @@ export class eList extends eBase {
 			this_eList._value.push(eTerm_);
 		})
 		
-		return eList_this;
+		return this;
 	}
 	
 	/**
