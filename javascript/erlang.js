@@ -462,6 +462,25 @@ export class eList extends eBase {
 	}
 	
 	/**
+	 * Append another eList term to the eList, but only the eTerms from
+	 * the other eList, that doens't exist in the eList.
+	 * 
+	 * @param {eList}
+	 *            eList_ - An eList.
+	 * @return {eList} the new eList.
+	 */
+	appendUnique(eList_) {
+		let this_eList = this;
+		
+		eList_.forEach(function(eTerm_) {
+			if(this.indexOf(eTerm_) === -1)
+				this_eList._value.push(eTerm_);
+		})
+		
+		return this;
+	}
+
+	/**
 	 * Delete a term from the eList
 	 * 
 	 * @param {eTerm}
