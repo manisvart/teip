@@ -455,7 +455,7 @@ export class eList extends eBase {
 		let this_eList = this;
 		
 		eList_.forEach(function(eTerm_) {
-			this_eList._value.push(eTerm);
+			this_eList._value.push(eTerm_);
 		})
 		
 		return eList_this;
