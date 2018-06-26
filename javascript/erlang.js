@@ -299,6 +299,7 @@ export class eAtom extends eBase {
  * string.value();
  */
 export class eString extends eBase {
+
 	constructor(value) {
 		if (typeof (value) === "string") {
 			super("string", value);
@@ -309,13 +310,21 @@ export class eString extends eBase {
 		} else
 			throw "Not an 'string', eString or a Carolus Domi Intermediate format";
 	}
+
 	encode()
 	{
 		return {string: this._value};
 	}
+
 	toString() {
 		return '"' + this._value + '"';
 	}
+
+	// Return the Erlang string as a JavaScript string
+	string() {
+		return this._value;
+	}
+
 	forEach() {
 		/*
 		 * All Erlang strings are array of characters. An empty list can
@@ -327,6 +336,7 @@ export class eString extends eBase {
 			/* Empty list, nothing to iterate */
 		}
 	}
+
 	lLength() {
 		/*
 		 * All Erlang strings are array of characters. An empty list can
@@ -437,7 +447,7 @@ export class eList extends eBase {
 	indexOfAtom(str) {
 		return this.indexOf(new eAtom(str));
 	}
-	forEach(fun, this_) {
+	forEach(fun, this_) { 
 		this._value.forEach(fun, this_);
 	}
 	lLength() {
