@@ -1,19 +1,32 @@
-%%%-------------------------------------------------------------------
-%%% @author Carl Nordin (manisvart)
-%%% @copyright (C) 2017, <COMPANY>
+%%% ___________________________________________________________________________Welcome
 %%% @doc
-%%%
+%%% Encode/decode Erlang terms to the Intermediate protocol (TEIP).
 %%% @end
-%%% Created : 08. Oct 2017 16:45
-%%%-------------------------------------------------------------------
+%%% ---------------------------------------------------------------------------
+%%% @author Carl Nordin (manisvart)
+%%% @copyright (C) 2018,Carl Nordin (manisvart)
+%%%
+%%% Licensed under the Apache License, Version 2.0 (the "License");
+%%% you may not use this file except in compliance with the License.
+%%% You may obtain a copy of the License at
+%%%
+%%%     http://www.apache.org/licenses/LICENSE-2.0
+%%%
+%%% Unless required by applicable law or agreed to in writing, software
+%%% distributed under the License is distributed on an "AS IS" BASIS,
+%%% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%%% See the License for the specific language governing permissions and
+%%% limitations under the License.
+%%% ---------------------------------------------------------------------------
 -module(teip).
--author("manisvart").
+-author("Carl Nordin (manisvart)").
 
-%% API
-
+%%%____________________________________________________________________________Module API exports
 -export([encode/1, decode/1]).
 
-% Encode Erlang terms to the Intermediate format (IF)
+%% @doc Encode Erlang terms to the Intermediate protocol (TEIP)
+%% ____________________________________________________________________________Function
+-spec encode(any()) -> map().
 
 encode(Integer) when is_integer(Integer) ->
   #{atom_to_binary('integer', 'unicode') => Integer};
@@ -75,6 +88,10 @@ list_encode(List, 'false') ->
 
 % Decode the Intermediate format (IF) to real Erlang terms
 
+%% @doc Decode the Intermediate protocol (TEIP) to Erlang terms
+%% ____________________________________________________________________________Function
+-spec decode(any()) -> any().
+
 decode(#{<<"integer">> := Data}) ->
   Data;
 
@@ -82,7 +99,7 @@ decode(#{<<"float">> := Data}) ->
   Data;
 
 decode(#{<<"atom">> := Data}) ->
-  binary_to_existing_atom(Data, 'unicode');
+  binary_to_atom(Data, 'unicode');
 
 decode(#{<<"string">> := Data}) ->
   binary_to_list(Data);
