@@ -56,14 +56,18 @@ encode(Map) when is_map(Map) ->
       lists:append(
         Acc,
         [#{atom_to_binary('key', 'unicode') => encode(K),
-          atom_to_binary('value', 'unicode') => encode(V)
-        }]
+           atom_to_binary('value', 'unicode') => encode(V)
+         }]
       )
     end,
 
     [], Map),
 
   #{atom_to_binary('map', 'unicode') => TempList};
+
+
+encode(Binary) when is_binary(Binary) ->
+  #{atom_to_binary('string', 'unicode') => Binary};
 
 
 encode(List) when is_list(List) ->
@@ -102,7 +106,9 @@ decode(#{<<"atom">> := Data}) ->
   binary_to_atom(Data, 'unicode');
 
 decode(#{<<"string">> := Data}) ->
-  binary_to_list(Data);
+  Norm = unicode:characters_to_nfd_list(Data),
+  UTF8 = unicode:characters_to_nfc_binary(Norm),
+  UTF8;
 
 
 decode(#{<<"tuple">> := Data}) ->
