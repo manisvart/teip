@@ -72,9 +72,7 @@ encode(List) when is_list(List) ->
 
 list_encode(String, 'true') ->
   % A string
-  %#{atom_to_binary('string', 'unicode') => list_to_binary(String)};
-  #{atom_to_binary('string', 'unicode') =>
-    unicode:characters_to_binary(String, unicode, utf16)};
+  #{atom_to_binary('string', 'unicode') => list_to_binary(String)};
 
 list_encode(List, 'false') ->
   % A list
@@ -104,8 +102,7 @@ decode(#{<<"atom">> := Data}) ->
   binary_to_atom(Data, 'unicode');
 
 decode(#{<<"string">> := Data}) ->
-  unicode:characters_to_binary(Data, utf16);
-  %binary_to_list(Data);
+  binary_to_list(Data);
 
 
 decode(#{<<"tuple">> := Data}) ->
